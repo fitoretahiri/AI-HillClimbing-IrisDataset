@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter import messagebox
 import numpy as np
 import time
-import random
 
 class NQueenSolverGUI:
     def __init__(self, root):
+        """Initialize the N-Queen Solver GUI."""
         self.root = root
         self.root.title("N-Queen Solver")
         self.create_widgets()
@@ -13,19 +13,19 @@ class NQueenSolverGUI:
         self.canvas = None
 
     def create_widgets(self):
-        # Input Frame
+        """Create input field and solve button in the GUI."""
         input_frame = tk.Frame(self.root)
         input_frame.pack(pady=10)
 
         tk.Label(input_frame, text="Enter Number of Queens (N):").grid(row=0, column=0, padx=5, pady=5)
         self.n_input = tk.Entry(input_frame, width=5)
         self.n_input.grid(row=0, column=1, padx=5, pady=5)
-        
-        # Start Button
+
         self.solve_button = tk.Button(input_frame, text="Solve", command=self.solve_nqueens)
         self.solve_button.grid(row=0, column=2, padx=10, pady=5)
 
     def initialize_canvas(self, N):
+        """Initialize and display the chessboard canvas."""
         if self.canvas:
             self.canvas.destroy()
         self.board_size = N
@@ -35,6 +35,7 @@ class NQueenSolverGUI:
         self.draw_board()
 
     def draw_board(self):
+        """Draw the N x N chessboard."""
         N = self.board_size
         for i in range(N):
             for j in range(N):
@@ -44,6 +45,7 @@ class NQueenSolverGUI:
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
 
     def draw_queens(self, board):
+        """Draw queens on the board based on the given board configuration."""
         self.canvas.delete("queen")
         N = len(board)
         for row, col in enumerate(board):
@@ -53,6 +55,7 @@ class NQueenSolverGUI:
         self.root.update()
 
     def solve_hill_climbing(self, board):
+        """Solve the N-Queens problem using the hill climbing algorithm."""
         N = len(board)
         current = board.copy()
         current_score = self.evaluate_conflicts(current)
@@ -83,6 +86,7 @@ class NQueenSolverGUI:
 
     @staticmethod
     def evaluate_conflicts(board):
+        """Count the number of queen conflicts in the given board configuration."""
         conflicts = 0
         N = len(board)
         for i in range(N):
@@ -92,6 +96,7 @@ class NQueenSolverGUI:
         return conflicts
 
     def solve_nqueens(self):
+        """Handle user input, generate initial board, and solve the N-Queens problem."""
         try:
             N = int(self.n_input.get())
             if N < 4:
@@ -107,13 +112,9 @@ class NQueenSolverGUI:
 
         while not solution_found:
             attempts += 1
-            # Randomly initialize the board
-            initial_board = np.random.randint(0, N, size=N)
+            initial_board = np.random.randint(0, N, size=N)  # Randomly initialize board
             self.draw_queens(initial_board)
-
-            start_time = time.time()
             final_board = self.solve_hill_climbing(initial_board)
-            end_time = time.time()
 
             final_score = self.evaluate_conflicts(final_board)
             if final_score == 0:
